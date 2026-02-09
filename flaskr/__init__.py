@@ -8,6 +8,11 @@ def create_app(test_config=None):
     '''
 
     app = Flask(__name__, instance_relative_config=True)
+    '''instance_relative_config=True tells the app that configuration 
+    files are relative to the instance folder. The instance folder is 
+    located outside the flaskr package and can hold local data that
+    shouldn’t be committed to version control, such as configuration 
+    secrets and the database file.'''
 
 
 
@@ -28,7 +33,7 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile('config.py', silent=True) # Actually overrides 'dev' if the file exists.
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -37,9 +42,13 @@ def create_app(test_config=None):
 
     # ensure the instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
+    '''ensures that app.instance_path exists. 
+    Flask doesn’t create the instance folder automatically, 
+    but it needs to be created because your project will 
+    create the SQLite database file there.'''
 
     # a simple page that says hello
-    @app.route('/hello')
+    @app.route('/')
     def hello():
         return 'Hello, World!'
 
