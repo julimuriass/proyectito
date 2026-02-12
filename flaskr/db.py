@@ -28,5 +28,27 @@ def get_db():
 def close_db(e=None): # e=None allows Flask to pass an error object if something failed.
     db = g.pop('db', None) # Removes 'db' from g, returns its value (or None of it didn't exist).
 
-    if db is not None: #Checks if a connection was found.
+    if db is not None: # Checks if a connection was found.
         db.close()
+
+def init_db(): # It builds your database structure from scratch.
+    db = get_db() # Opens the connection to the SQLite db, and stores it in g.
+    # So now db is my active db connection.
+
+    with current_app.open_resource('schema.sql') as f: 
+        # current_app refers to the active Flask application.
+        # open_resource('schema.sql') tells Flask to open the file called 'schema.sql' inside the application folder.
+        db.executescript(f.read().decode('utf8'))
+        # executescript() runs MULTIPLE SQL statements at once. It executes the entire SQL file in one go.
+        # f.read() reads the entire contents of schema.sql, but it returns bytes, not a string.
+
+@click.command('init-db')
+def init_db_command():
+    init_db()
+    click.echo('Initialized the database.')
+
+
+# The call to sqlite3.register_converter() tells Python how to interpret timestamp values in the database. We convert the value to a datetime.datetime.
+sqlite3.register_converter(
+    "timestamp", lambda v: datetime.fromisoformat(v.decode())
+)
