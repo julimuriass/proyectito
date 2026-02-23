@@ -48,9 +48,42 @@ def register():
             
     return render_template('auth/register.html') # This always runs when the request is GET or there was an error in POST.
     # GET request -> just shows the form.
-    # POST with error -> show form again with error message.
+    # POST with error -> shows form again with error message.
    
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
-    pass
-   # if request.method == 'POST'
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        db = get_db()
+        error = None
+        user = db.execute(
+            'SELECT * FROM user WHERE username = ?', (username)
+        ).fetchone() # fetchone() returns the next single row from the result of a query. If there are no more rows left it returns None.
+
+        if user is None:
+            error = 'Incorrect username :p'
+        elif not check_password_hash(user['password'], password):
+            error = 'Incorrect password >:|'
+        
+        if error is None:
+            session.clear() # session is a dict that stores data across requests.
+            session['user_id'] = user['id'] # When validation succeeds, the user's id is stored in a new session.
+            return redirect(url_for('index'))
+    
+    return render_template('auth/login.html')
+
+
+'''Now that the user’s id is stored in the session, it will be available on subsequent requests. 
+At the beginning of each request, if a user is logged in their information should be loaded and made available to other views.'''
+
+@bp.before_app_request
+def load_logged_in_user(): # Checks if a user is stored in the session and gets that user's data from the db, storing it on g.user, which lasts for the length of the request.
+    user_id = session.get('user_id')
+
+    if user_id is None: # If there is no user id, or if the id doesn't exist, g.user will be None.
+        g.user = None
+    else:
+        g.user = get_db().execute(
+            'SELECT * FROM user WHERE id = ?', (user_id,)
+        ).fetchone()
