@@ -87,3 +87,23 @@ def load_logged_in_user(): # Checks if a user is stored in the session and gets 
         g.user = get_db().execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
+
+
+@bp.route('/logout')
+def logout():
+    session.clear() # Removes the user id from the session.
+    return redirect(url_for('index'))
+
+
+# Decorator to protect routes.
+def login_required(view): # view is the view function that we want to protect.
+    @functools.wraps(view) # This is another decorator. It preserves the original fn's name and metadata
+
+    # This fn replaces the origianl view.
+    def wrapped_view(**kwargs): # **kwargs allows it to accept any keyboard arguments the route might receive.
+        if g.user is None:
+            return redirect(url_for('auth.login')) 
+
+        return view(**kwargs) # Call the original view fn, pass along any arguments it needs.
+    
+    return wrapped_view # Returns the fn itself (it doesn't run it because it's not return wrapped_view())
