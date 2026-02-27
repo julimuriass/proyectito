@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <title>{% block title %}{% endblock %} - Flaskr</title> <!-- This is a Jinja block -> it means: child templates can replace this part.-->
+<!-- {% block title %} will change the title displayed in the browser’s tab and window title.-->
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
 <!-- Load a css file to style this page.
 Inside of href: instead of writing href="style/style.css", flask writes what's there.
@@ -22,10 +23,11 @@ It all just means: Load the file style.css from the static folder.-->
 
 <section class="content"> <!-- Main content area of the page.-->
     <header>
-        {% block header %}{% endblock %}
+        {% block header %}{% endblock %} <!-- {% block header %} is similar to title but will change the title displayed on the page.-->
     </header>
-    {% for message in get_flashed_messages() %}
+    {% for message in get_flashed_messages() %} <!-- I used flash() in the views to show error messages, and this is the code that will display them.-->
         <div class="flash">{{ message }}</div> <!-- Each message is displayed inside a div.-->
     {% endfor %}
     {% block content %}{% endblock %}
+    <!-- {% block content %} is where the content of each page goes, such as the login form or a blog post.-->
 </section>
