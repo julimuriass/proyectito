@@ -36,8 +36,7 @@ def create(): # Python secretly does this: create = login_required(create). Whic
         if not title:
             error = 'Title is required :/'
 
-        if not body:
-            error = 'Body is required :/'
+        # Not null means the value cannot be nill, but is can still be an empty string, that's why I don't check for body.
 
         if error is not None:
             flash(error)
@@ -53,4 +52,54 @@ def create(): # Python secretly does this: create = login_required(create). Whic
             return redirect(url_for('blog.index'))
         
     return render_template('blog/create.html')
+
+
+# Both the update and delete views will need to fetch a post by id and check if the author matches the logged in user.
+def get_post(id, check_author=True):
+    post = get_db().execute(
+        'SELECT p.id, title, body, created, uthor_id, username'
+        'FROM post p JOIN user u ON p.author_id = u.id'
+        'WHERE p.id = ?',
+        (id,)
+    ).fetchone() # It’s fetching one specific post by its ID.
+
+    if post is None:
+        abort(404, f"Post if {id} doesn't exist.") # abort() will raise a special exception that returns an HTTP status code. 
+
+    if check_author and post['author_id'] != g.user['id']:
+        abort(403) # 403 means "Forbidden".
+    
+    return post
+
+# UPDATE.
+
+# ('/<int:id>/update' is a URL var. It means: 'Expect a number in this part of the URL, and store is in a var called id.
+# int: is a converter.
+@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def update(id):
+    post = get_post(id)
+
+    if request.method == 'POST':
+        # It updates both columns every time. But you can leave one unchanged — it will just re-save the same value.
+        title = request.form['title']
+        body = request.form['post']
+        error = None
+
+        if not title:
+            error = 'Title is required.'
+        
+        if error is not None: 
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE post SET title = ?, body = ?'
+                'WHERE id = ?',
+                (title, body, id)
+            )
+            db.commit()
+            return redirect(url_for('blog.index'))
+        
+    return render_template('blog/update.html', post=post)
 
