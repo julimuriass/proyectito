@@ -1,0 +1,20 @@
+{% extends base.html %}
+
+{% block header %}
+  <h1>{% block title %} New Post{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post"> <!-- Creates an html form. When submitted, the brwoser sends a POST request, the data goes in the request body. (It'll trigger: if request.method == 'POST':)-->
+    <label for="title">Title</label> <!-- Creates a label for an input. This connects the label to: <input id="title">  So when you click the word “Title”, the cursor jumps to the input.-->
+
+    <!-- When the form is submitted, Flask receives: request.form['title']-->
+    <!-- id="title" connects to <label for="title">-->
+    <!-- The last part means: Fill this input with whatever the user previously typed. -->
+    <input name="title" id="title" value="{{ request.form['title']}}" required>
+
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{{ request.form['body'] }}</textarea> <!-- Textarea does NOT use value="". Instead: <textarea>CONTENT GOES HERE</textarea>.-->
+    <input type="submit" value="Save">
+  </form>
+  {% endblock %}
