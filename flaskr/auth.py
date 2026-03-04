@@ -35,7 +35,7 @@ def register():
         if error is None:
             try: # Try to insert the user.
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",  # The ? are placeholders (2 prevent SQL injection) -> They mean: SQLite, I will give you the real values separately (and then woy pass them like in the next line.)
+                    'INSERT INTO user (username, password) VALUES (?, ?)',  # The ? are placeholders (2 prevent SQL injection) -> They mean: SQLite, I will give you the real values separately (and then woy pass them like in the next line.)
                     (username, generate_password_hash(password))
                 )
                 db.commit() # This saves the changes permanently.
