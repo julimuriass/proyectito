@@ -58,7 +58,7 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username)
+            'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone() # fetchone() returns the next single row from the result of a query. If there are no more rows left it returns None.
 
         if user is None:

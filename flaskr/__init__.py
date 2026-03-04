@@ -48,9 +48,9 @@ def create_app(test_config=None):
     create the SQLite database file there.'''
 
     # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return 'Hello, World!'
+    #@app.route('/')
+    #def hello():
+     #   return 'Hello, World!'
     
     from . import db
     db.init_app(app)
