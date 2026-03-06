@@ -1,8 +1,8 @@
 [project]
-name = "flaskr_Julieta_Murias"
+name = "flaskr"
 version = "1.0.0"
 authors = [
-    { name="Julieta Murias", github="https://github.com/julimuriass" },
+    { name="Julieta Murias", email="julieta.murias@gmail.com" },
 ]
 description = "The basic blog app built in the Flask tutorial."
 readme = "README.md"
