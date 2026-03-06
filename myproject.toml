@@ -1,0 +1,15 @@
+[project]
+name = "flaskr_Julieta_Murias"
+version = "1.0.0"
+authors = [
+    { name="Julieta Murias", github="https://github.com/julimuriass" },
+]
+description = "The basic blog app built in the Flask tutorial."
+readme = "README.md"
+dependencies = [
+    "flask",
+]
+
+[build-system]
+requires = ["flit_core<4"] 
+build-backend = "flit_core.buildapi"
