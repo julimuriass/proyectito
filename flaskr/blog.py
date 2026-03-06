@@ -56,7 +56,7 @@ def create(): # Python secretly does this: create = login_required(create). Whic
 # Both the update and delete views will need to fetch a post by id and check if the author matches the logged in user.
 def get_post(id, check_author=True):
     post = get_db().execute(
-        'SELECT p.id, title, body, created, uthor_id, username ' 
+        'SELECT p.id, title, body, created, author_id, username ' 
         'FROM post p JOIN user u ON p.author_id = u.id '
         'WHERE p.id = ?',
         (id,)
@@ -82,7 +82,7 @@ def update(id):
     if request.method == 'POST':
         # It updates both columns every time. But you can leave one unchanged — it will just re-save the same value.
         title = request.form['title']
-        body = request.form['post']
+        body = request.form['body']
         error = None
 
         if not title:
@@ -110,6 +110,6 @@ def update(id):
 def delete(id):
     get_post(id) # The purpose is not to get the post. The purpose is to validate it.
     db = get_db()
-    db.execute('DELETE FROM post WHERE id = ?' (id,))
+    db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
